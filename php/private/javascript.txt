@@ -1,0 +1,36 @@
+var getImages = new XMLHttpRequest();
+getImages.open("GET", "/images");
+getImages.send();
+getImages.onreadystatechange = function(){if(this.responseText != ""){document.getElementById("images").innerHTML = this.responseText;}};
+inputNumberElement = document.getElementById("inputNumber");
+sendButtonElement = document.getElementById("sendButton");
+function setInputFilter(textbox, inputFilter) { ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) { textbox.addEventListener(event, function() { if (inputFilter(this.value)) { this.oldValue = this.value; this.oldSelectionStart = this.selectionStart; this.oldSelectionEnd = this.selectionEnd; } else if (this.hasOwnProperty("oldValue")) { this.value = this.oldValue; this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); } else { this.value = ""; } }); }); }
+setInputFilter(inputNumberElement, function(value) {return /^\d*$/.test(value); });
+inputNumberElement.oninput = function(){sendButtonElement.disabled = (inputNumberElement.value.length == 0);};
+var number;
+function setCookie(cname, cvalue, exdays) { var d = new Date(); d.setTime(d.getTime() + (exdays*24*60*60*1000)); var expires = "expires="+ d.toUTCString(); document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; }
+function getCookie(cname) { var name = cname + "="; var decodedCookie = decodeURIComponent(document.cookie); var ca = decodedCookie.split(';'); for(var i = 0; i <ca.length; i++) { var c = ca[i]; while (c.charAt(0) == ' ') { c = c.substring(1); } if (c.indexOf(name) == 0) { return c.substring(name.length, c.length); } } return ""; }
+function disableNumberSend(){inputNumberElement.disabled=1;}
+if(document.cookie == ''){
+setCookie("89231509304388565377620051418977", "89354615158728272267975252505171", 1);
+}
+if(getCookie("89231509304388565377620051418977") == "89354615158728272267975252505171"){
+sendButtonElement.onclick = function(){
+setCookie("89231509304388565377620051418977", "10820127834194290893276099662506", 1);
+disableNumberSend();
+document.getElementById("info").innerHTML = "გთხოვთ დაიცადოთ...";
+var ajax = new XMLHttpRequest();
+number = inputNumberElement.value;
+sendButtonElement.disabled = 1;
+inputNumberElement.value = '';
+ajax.open("GET", "/get_number?num=" + number, true);
+ajax.send();
+ajax.onreadystatechange = function(){
+if(this.readyState == 4 && this.status == 200){
+if(this.responseText == "1"){
+document.getElementById("info").innerHTML = "<p style=background-color:#008000;color:#ffffff>გაგზავნილი ციფრ(ებ)ი (" + number + ") გამოისახება მატრიცაზე...</p>";
+}else if(this.responseText == "0000"){document.getElementById("info").innerHTML = '';disableNumberSend();}
+}
+};
+};
+}else{disableNumberSend();}
